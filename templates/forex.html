@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>📈 Real-Time Forex</h1>
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary">&larr; Back to Home</a>
+</div>
+
+<p class="text-muted mb-4">Auto-updates every 60 seconds. Last updated: <span id="last-updated">{{ last_updated|date:"M d, Y H:i" }}</span></p>
+
+{% if error %}
+<div class="alert alert-warning">{{ error }}</div>
+{% endif %}
+
+<div id="news-container">
+<!-- Exchange Rates -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-3">💱 Live Exchange Rates (USD Base)</h2>
+        <div class="row">
+            {% for currency, value in rates.items %}
+            <div class="col-md-4 col-sm-6 mb-3">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">USD / {{ currency }}</h5>
+                        <p class="card-text display-6 fw-bold text-success">{{ value|floatformat:4 }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning">No exchange rate data available right now.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Forex News -->
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-3">📰 Forex News</h2>
+        {% if forex_articles %}
+        <div class="list-group">
+            {% for article in forex_articles %}
+            <a href="{{ article.link }}" target="_blank" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ article.title }}</h5>
+                    <small class="text-muted">{{ article.published }}</small>
+                </div>
+                <p class="mb-1 small text-muted">{{ article.summary }}</p>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-warning">No forex news articles available right now.</div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+<script>
+(function() {
+    const interval = 60000;
+    let url = window.location.href;
+    let timer = null;
+
+    function refreshNews() {
+        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContainer = doc.getElementById('news-container');
+                const currentContainer = document.getElementById('news-container');
+                const newTimestamp = doc.getElementById('last-updated');
+                const currentTimestamp = document.getElementById('last-updated');
+                if (newContainer && currentContainer) {
+                    currentContainer.innerHTML = newContainer.innerHTML;
+                }
+                if (newTimestamp && currentTimestamp) {
+                    currentTimestamp.textContent = newTimestamp.textContent;
+                }
+            })
+            .catch(() => {});
+    }
+
+    function startAutoRefresh() {
+        timer = setInterval(refreshNews, interval);
+    }
+
+    function stopAutoRefresh() {
+        if (timer) clearInterval(timer);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAutoRefresh();
+        } else {
+            refreshNews();
+            startAutoRefresh();
+        }
+    });
+
+    startAutoRefresh();
+})();
+</script>
+
+{% endblock %}

@@ -1,22 +1,116 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.utils import timezone
+import requests
+import feedparser
+from .models import News
+
+
+def _fetch_feed(url, limit=20):
+    articles = []
+    try:
+        feed = feedparser.parse(url)
+        for entry in feed.entries[:limit]:
+            articles.append({
+                "title": entry.get("title", "No title"),
+                "link": entry.get("link", "#"),
+                "published": entry.get("published", ""),
+                "summary": entry.get("summary", "")[:200],
+            })
+    except Exception:
+        pass
+    return articles
+
 
 def home(request):
-
-    breaking_news = [
-        {
-            "title": "OpenAI releases a new AI model",
-            "category": "AI",
-        },
-        {
-            "title": "Gold price climbs as USD weakens",
-            "category": "Forex",
-        },
-        {
-            "title": "Critical Windows security vulnerability discovered",
-            "category": "Cybersecurity",
-        },
-    ]
+    breaking_news = News.objects.all()
 
     return render(request, "home.html", {
         "breaking_news": breaking_news
     })
+
+
+def news_detail(request, pk):
+    news = get_object_or_404(News, pk=pk)
+    return render(request, "news_detail.html", {"news": news})
+
+
+def ai_news(request):
+    articles = _fetch_feed("https://techcrunch.com/category/artificial-intelligence/feed/")
+    return render(request, "ai_news.html", {
+        "articles": articles,
+        "title": "AI News",
+        "last_updated": timezone.now(),
+    })
+
+
+def cybersecurity_news(request):
+    articles = _fetch_feed("https://feeds.feedburner.com/TheHackersNews")
+    return render(request, "cybersecurity_news.html", {
+        "articles": articles,
+        "title": "Cybersecurity News",
+        "last_updated": timezone.now(),
+    })
+
+
+def emergency_news(request):
+    emergency_items = News.objects.filter(is_emergency=True)
+    return render(request, "emergency_news.html", {
+        "emergency_items": emergency_items,
+        "last_updated": timezone.now(),
+    })
+
+
+def forex_news(request):
+    rates = {}
+    forex_articles = []
+    error = None
+
+    try:
+        rate_resp = requests.get(
+            "https://open.er-api.com/v6/latest/USD",
+            timeout=10
+        )
+        if rate_resp.status_code == 200:
+            data = rate_resp.json()
+            rates = data.get("rates", {})
+            rates = {
+                k: v for k, v in rates.items()
+                if k in ["EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD", "XAU", "XAG"]
+            }
+        else:
+            error = "Failed to fetch exchange rates."
+    except Exception:
+        error = "Error connecting to exchange rate service."
+
+    try:
+        forex_articles = _fetch_feed("https://www.forexlive.com/feed/news")
+    except Exception:
+        if not error:
+            error = "Error fetching forex news feed."
+
+    return render(request, "forex.html", {
+        "rates": rates,
+        "forex_articles": forex_articles,
+        "error": error,
+        "last_updated": timezone.now(),
+    })
+
+
+def news_api(request):
+    category = request.GET.get("category")
+    if category:
+        items = News.objects.filter(category=category)
+    else:
+        items = News.objects.all()
+    data = [
+        {
+            "title": n.title,
+            "category": n.category,
+            "content": n.content,
+            "created_at": n.created_at.isoformat(),
+            "is_emergency": n.is_emergency,
+        }
+        for n in items
+    ]
+    return JsonResponse({"news": data})

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">&larr; Back to Home</a>
+
+<div class="p-4 card shadow">
+    <span class="badge bg-primary">{{ news.category }}</span>
+    <h1 class="mt-2">{{ news.title }}</h1>
+    <p class="text-muted">{{ news.created_at|date:"M d, Y" }}</p>
+    <hr>
+    <p>{{ news.content }}</p>
+</div>
+
+{% endblock %}

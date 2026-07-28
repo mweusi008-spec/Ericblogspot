@@ -8,7 +8,7 @@
     <p class="lead">
         Your trusted source for AI, Technology, Forex and Cybersecurity news.
     </p>
-    <a href="#" class="btn btn-light btn-lg">Read Latest News</a>
+    <a href="{% url 'forex' %}" class="btn btn-light btn-lg">Real-Time Forex</a>
 </div>
 
 <!-- Categories -->
@@ -19,7 +19,7 @@
             <div class="card-body">
                 <h3>🤖 AI News</h3>
                 <p>Latest Artificial Intelligence updates from around the world.</p>
-                <a href="#" class="btn btn-primary">Explore</a>
+                <a href="{% url 'ai_news' %}" class="btn btn-primary">Explore</a>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
             <div class="card-body">
                 <h3>📈 Forex News</h3>
                 <p>Gold, currencies, market analysis and trading insights.</p>
-                <a href="#" class="btn btn-success">Explore</a>
+                <a href="{% url 'forex' %}" class="btn btn-success">Live Rates & News</a>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <div class="card-body">
                 <h3>🛡️ Cybersecurity</h3>
                 <p>Stay updated with the latest cyber threats and security news.</p>
-                <a href="#" class="btn btn-danger">Explore</a>
+                <a href="{% url 'cybersecurity' %}" class="btn btn-danger">Explore</a>
             </div>
         </div>
     </div>
@@ -47,25 +47,70 @@
 </div>
 
 <!-- Breaking News -->
-<h2 class="mt-5 mb-3">🔥 Breaking News</h2>
+<h2 class="mt-5 mb-3" id="breaking">🔥 Breaking News</h2>
 
+<div id="news-container">
 <div class="list-group mb-5">
 
     {% for news in breaking_news %}
 
-    <div class="list-group-item">
+    <a href="{% url 'news_detail' news.pk %}" class="list-group-item list-group-item-action">
         <h5>{{ news.title }}</h5>
         <span class="badge bg-primary">{{ news.category }}</span>
-    </div>
+        <p class="mb-0 mt-1 small text-muted">{{ news.created_at|date:"M d, Y" }}</p>
+    </a>
 
     {% empty %}
 
     <div class="list-group-item">
-        No breaking news available.
+        No breaking news available. Check back soon!
     </div>
 
     {% endfor %}
 
 </div>
+</div>
+
+<script>
+(function() {
+    const interval = 120000;
+    let url = window.location.href;
+    let timer = null;
+
+    function refreshNews() {
+        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContainer = doc.getElementById('news-container');
+                const currentContainer = document.getElementById('news-container');
+                if (newContainer && currentContainer) {
+                    currentContainer.innerHTML = newContainer.innerHTML;
+                }
+            })
+            .catch(() => {});
+    }
+
+    function startAutoRefresh() {
+        timer = setInterval(refreshNews, interval);
+    }
+
+    function stopAutoRefresh() {
+        if (timer) clearInterval(timer);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAutoRefresh();
+        } else {
+            refreshNews();
+            startAutoRefresh();
+        }
+    });
+
+    startAutoRefresh();
+})();
+</script>
 
 {% endblock %}
