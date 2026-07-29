@@ -63,22 +63,18 @@ def news_detail(request, pk):
 
 
 def ai_news(request):
-    feeds = [
-        {"name": "TechCrunch AI", "url": "https://techcrunch.com/category/artificial-intelligence/feed/"},
-    ]
+    articles = _fetch_feed("https://techcrunch.com/category/artificial-intelligence/feed/", limit=30)
     return render(request, "ai_news.html", {
-        "feeds": feeds,
+        "articles": articles,
         "title": "AI News",
         "last_updated": timezone.now(),
     })
 
 
 def cybersecurity_news(request):
-    feeds = [
-        {"name": "The Hacker News", "url": "https://feeds.feedburner.com/TheHackersNews"},
-    ]
+    articles = _fetch_feed("https://feeds.feedburner.com/TheHackersNews", limit=30)
     return render(request, "cybersecurity_news.html", {
-        "feeds": feeds,
+        "articles": articles,
         "title": "Cybersecurity News",
         "last_updated": timezone.now(),
     })
@@ -97,10 +93,6 @@ def forex_news(request):
     gold_price = None
     gold_error = None
     error = None
-
-    feeds = [
-        {"name": "ForexLive News", "url": "https://www.forexlive.com/feed/news"},
-    ]
 
     try:
         rate_resp = requests.get(
@@ -130,11 +122,13 @@ def forex_news(request):
     except Exception:
         gold_error = "Error fetching gold price."
 
+    forex_articles = _fetch_feed("https://www.forexlive.com/feed/news", limit=30)
+
     return render(request, "forex.html", {
         "rates": rates,
         "gold_price": gold_price,
         "gold_error": gold_error,
-        "feeds": feeds,
+        "forex_articles": forex_articles,
         "error": error,
         "last_updated": timezone.now(),
     })

@@ -104,22 +104,17 @@
 <div class="row">
     <div class="col-12">
         <h2 class="mb-3">📰 Forex News</h2>
-        {% if feeds %}
+        {% if forex_articles %}
         <div class="list-group">
-            {% for feed in feeds %}
-            <a href="{{ feed.url }}" target="_blank" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1">📰 {{ feed.name }}</h5>
-                        <p class="mb-0 small text-muted">Click to view latest forex news from {{ feed.name }}</p>
-                    </div>
-                    <span class="badge bg-success">RSS Feed</span>
-                </div>
+            {% for article in forex_articles %}
+            <a href="{{ article.link }}" target="_blank" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ article.title }}</h5>
+                <small class="text-muted">{{ article.published }}</small>
             </a>
             {% endfor %}
         </div>
         {% else %}
-        <div class="alert alert-warning">No forex news feeds available right now.</div>
+        <div class="alert alert-warning">No forex news articles available right now.</div>
         {% endif %}
     </div>
 </div>
