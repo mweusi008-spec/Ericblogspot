@@ -130,7 +130,8 @@
     let timer = null;
 
     function refreshNews() {
-        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+        const cacheBuster = Date.now();
+        fetch(url + (url.includes('?') ? '&' : '?') + '_=' + cacheBuster, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
             .then(r => r.text())
             .then(html => {
                 const parser = new DOMParser();
