@@ -13,22 +13,6 @@
 
 <body>
 
-{% if emergency_items %}
-<div id="emergency-ribbon" class="emergency-ribbon">
-    <div class="emergency-ribbon-content">
-        <span class="emergency-icon">🚨</span>
-        <span class="emergency-text">
-            {% for item in emergency_items %}
-                {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-            {% endfor %}
-            {% for item in emergency_items %}
-                {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-            {% endfor %}
-        </span>
-    </div>
-</div>
-{% endif %}
-
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
 
@@ -77,7 +61,23 @@
     </div>
 </nav>
 
-<div class="container mt-5">
+{% if emergency_items %}
+<div id="emergency-ribbon" class="emergency-ribbon">
+    <div class="emergency-ribbon-content">
+        <span class="emergency-icon">🚨</span>
+        <span class="emergency-text">
+            {% for item in emergency_items %}
+                {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            {% endfor %}
+            {% for item in emergency_items %}
+                {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            {% endfor %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+<div class="container mt-4">
 
 {% block content %}
 
