@@ -136,3 +136,20 @@ def contact(request):
     return render(request, "contact.html", {
         "contact_info": contact_info,
     })
+
+
+def setup_admin(request):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    
+    if User.objects.filter(username='admin').exists():
+        return render(request, "setup_admin.html", {
+            "status": "exists",
+            "message": "Admin user already exists."
+        })
+    
+    User.objects.create_superuser('admin', 'admin@ericblogspot.com', 'admin123')
+    return render(request, "setup_admin.html", {
+        "status": "success",
+        "message": "Admin user created! Username: admin, Password: admin123"
+    })

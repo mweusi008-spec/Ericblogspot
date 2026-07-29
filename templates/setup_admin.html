@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🔧 Admin Setup</h1>
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary">&larr; Back to Home</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-body p-5 text-center">
+                {% if status == 'success' %}
+                <div class="alert alert-success">
+                    <h4>✅ Success!</h4>
+                    <p class="mb-0">{{ message }}</p>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary btn-lg">
+                        Go to Admin Panel →
+                    </a>
+                </div>
+                <p class="text-muted mt-3 small">
+                    After logging in, please change your password immediately.
+                </p>
+                
+                {% elif status == 'exists' %}
+                <div class="alert alert-warning">
+                    <h4>⚠️ Already Exists</h4>
+                    <p class="mb-0">{{ message }}</p>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary btn-lg">
+                        Go to Admin Panel →
+                    </a>
+                </div>
+                
+                {% else %}
+                <div class="text-center">
+                    <h3 class="mb-3">Create Admin Account</h3>
+                    <p class="text-muted mb-4">
+                        This will create the admin user for your blog.
+                    </p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            ⚡ Create Admin User
+                        </button>
+                    </form>
+                    <p class="text-muted mt-3 small">
+                        Credentials: <strong>admin</strong> / <strong>admin123</strong>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
