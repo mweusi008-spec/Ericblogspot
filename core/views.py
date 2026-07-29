@@ -11,10 +11,20 @@ def _fetch_feed(url, limit=20):
     try:
         feed = feedparser.parse(url)
         for entry in feed.entries[:limit]:
+            published = entry.get("published", "")
+            if published:
+                try:
+                    from datetime import datetime
+                    import email.utils
+                    dt = datetime(*entry.published_parsed[:6])
+                    published = dt.strftime("%b %d, %Y")
+                except Exception:
+                    pass
+            
             articles.append({
                 "title": entry.get("title", "No title"),
                 "link": entry.get("link", "#"),
-                "published": entry.get("published", ""),
+                "published": published,
                 "summary": entry.get("summary", "")[:200],
                 "source": "RSS",
             })
