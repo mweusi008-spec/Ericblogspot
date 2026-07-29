@@ -16,6 +16,7 @@ def _fetch_feed(url, limit=20):
                 "link": entry.get("link", "#"),
                 "published": entry.get("published", ""),
                 "summary": entry.get("summary", "")[:200],
+                "source": "RSS",
             })
     except Exception:
         pass
@@ -24,9 +25,25 @@ def _fetch_feed(url, limit=20):
 
 def home(request):
     breaking_news = News.objects.all()
+    
+    rss_articles = []
+    rss_feeds = [
+        "https://www.standardmedia.co.ke/rss/headlines.php",
+        "https://www.standardmedia.co.ke/rss/kenya.php",
+        "https://www.standardmedia.co.ke/rss/politics.php",
+        "https://www.bbc.com/news/entertainment_and_arts/rss.xml",
+        "https://www.tmz.com/rss.xml",
+    ]
+    
+    for feed_url in rss_feeds:
+        rss_articles.extend(_fetch_feed(feed_url, limit=10))
+    
+    rss_articles.sort(key=lambda x: x.get("published", ""), reverse=True)
+    rss_articles = rss_articles[:20]
 
     return render(request, "home.html", {
-        "breaking_news": breaking_news
+        "breaking_news": breaking_news,
+        "rss_articles": rss_articles,
     })
 
 
