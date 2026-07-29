@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-qa=d$5z@mx*yz)4!s#*sq
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'ericblogspot.onrender.com', 'www.ericblogspot.com', 'ericblogspot.com']
 
 
 # Application definition

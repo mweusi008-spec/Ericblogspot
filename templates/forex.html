@@ -14,10 +14,56 @@
 {% endif %}
 
 <div id="news-container">
+
+<!-- Major Pairs -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-3">🌟 Major Pairs</h2>
+        <div class="row">
+            {% if gold_price %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow text-center border-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">🥇 XAU / USD</h5>
+                        <p class="card-text display-6 fw-bold text-warning">{{ gold_price|floatformat:2 }}</p>
+                        <small class="text-muted">Gold per troy ounce</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if rates.EUR %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">EUR / USD</h5>
+                        <p class="card-text display-6 fw-bold text-success">{{ rates.EUR|floatformat:4 }}</p>
+                        <small class="text-muted">Euro / US Dollar</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if rates.GBP %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">GBP / USD</h5>
+                        <p class="card-text display-6 fw-bold text-success">{{ rates.GBP|floatformat:4 }}</p>
+                        <small class="text-muted">British Pound / US Dollar</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if gold_error %}
+        <div class="alert alert-warning mt-2">{{ gold_error }}</div>
+        {% endif %}
+    </div>
+</div>
+
 <!-- Exchange Rates -->
 <div class="row mb-5">
     <div class="col-12">
-        <h2 class="mb-3">💱 Live Exchange Rates (USD Base)</h2>
+        <h2 class="mb-3">💱 Other Exchange Rates (USD Base)</h2>
         <div class="row">
             {% for currency, value in rates.items %}
             <div class="col-md-4 col-sm-6 mb-3">
@@ -33,6 +79,32 @@
                 <div class="alert alert-warning">No exchange rate data available right now.</div>
             </div>
             {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Market Calendar -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-3">📅 Market Calendar</h2>
+        <div class="card shadow">
+            <div class="card-body">
+                <p class="text-muted mb-3">Stay updated with upcoming economic events that impact forex markets.</p>
+                <div class="ratio ratio-16x9">
+                    <iframe src="https://www.forexfactory.com/calendar" 
+                            title="Forex Factory Calendar" 
+                            frameborder="0" 
+                            scrolling="yes"
+                            style="border: 1px solid #ddd; border-radius: 8px;"
+                            onerror="this.parentElement.innerHTML='<div class=\\'alert alert-warning text-center\\'>Unable to load calendar. <a href=\\'https://www.forexfactory.com/calendar\\' target=\\'_blank\\'>Click here to view Forex Factory Calendar</a></div>'">
+                    </iframe>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="https://www.forexfactory.com/calendar" target="_blank" class="btn btn-primary">
+                        View Full Calendar on Forex Factory ↗
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -63,6 +63,8 @@ def emergency_news(request):
 
 def forex_news(request):
     rates = {}
+    gold_price = None
+    gold_error = None
     forex_articles = []
     error = None
 
@@ -76,12 +78,23 @@ def forex_news(request):
             rates = data.get("rates", {})
             rates = {
                 k: v for k, v in rates.items()
-                if k in ["EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD", "XAU", "XAG"]
+                if k in ["EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"]
             }
         else:
             error = "Failed to fetch exchange rates."
     except Exception:
         error = "Error connecting to exchange rate service."
+
+    try:
+        gold_resp = requests.get(
+            "https://api.gold-api.com/price/XAU",
+            timeout=10
+        )
+        if gold_resp.status_code == 200:
+            gold_data = gold_resp.json()
+            gold_price = gold_data.get("price")
+    except Exception:
+        gold_error = "Error fetching gold price."
 
     try:
         forex_articles = _fetch_feed("https://www.forexlive.com/feed/news")
@@ -91,6 +104,8 @@ def forex_news(request):
 
     return render(request, "forex.html", {
         "rates": rates,
+        "gold_price": gold_price,
+        "gold_error": gold_error,
         "forex_articles": forex_articles,
         "error": error,
         "last_updated": timezone.now(),
