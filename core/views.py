@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 import requests
 import feedparser
-from .models import News
+from .models import News, ContactInfo
 
 
 def _fetch_feed(url, limit=20):
@@ -114,3 +114,10 @@ def news_api(request):
         for n in items
     ]
     return JsonResponse({"news": data})
+
+
+def contact(request):
+    contact_info = ContactInfo.objects.filter(is_active=True).first()
+    return render(request, "contact.html", {
+        "contact_info": contact_info,
+    })
