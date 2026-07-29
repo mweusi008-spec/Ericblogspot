@@ -131,6 +131,19 @@ def news_api(request):
     return JsonResponse({"news": data})
 
 
+def emergency_api(request):
+    items = News.objects.filter(is_emergency=True)
+    data = [
+        {
+            "title": n.title,
+            "content": n.content,
+            "created_at": n.created_at.isoformat(),
+        }
+        for n in items
+    ]
+    return JsonResponse({"emergency": data})
+
+
 def contact(request):
     contact_info = ContactInfo.objects.filter(is_active=True).first()
     return render(request, "contact.html", {
