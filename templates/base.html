@@ -21,6 +21,9 @@
             {% for item in emergency_items %}
                 {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
             {% endfor %}
+            {% for item in emergency_items %}
+                {{ item.title }} &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            {% endfor %}
         </span>
     </div>
 </div>
@@ -103,10 +106,13 @@
                 const items = data.emergency || [];
 
                 if (items.length > 0) {
-                    let html = '<div id="emergency-ribbon" class="emergency-ribbon"><div class="emergency-ribbon-content"><span class="emergency-icon">🚨</span><span class="emergency-text">';
+                    let content = '';
                     items.forEach(function(item) {
-                        html += item.title + ' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;';
+                        content += item.title + ' &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ';
                     });
+
+                    let html = '<div id="emergency-ribbon" class="emergency-ribbon"><div class="emergency-ribbon-content"><span class="emergency-icon">🚨</span><span class="emergency-text">';
+                    html += content + content; // duplicate for seamless loop
                     html += '</span></div></div>';
 
                     if (existing) {

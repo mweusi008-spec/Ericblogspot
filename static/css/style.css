@@ -465,7 +465,7 @@ small {
     display: flex;
     align-items: center;
     white-space: nowrap;
-    animation: marquee 20s linear infinite;
+    animation: marquee 15s linear infinite;
 }
 
 .emergency-icon {
