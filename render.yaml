@@ -14,11 +14,11 @@ services:
         value: config.settings
       - key: PYTHON_VERSION
         value: 3.11.0
-      - key: postgresql://ericblogspot_db_user:WlGIQZOdBlOVGt5Bln1k1ipqAQlGmPa4@dpg-d9kk8hdg1s2s73f501qg-a/ericblogspot_db
+      - key: DATABASE_URL
         fromDatabase:
           name: ericblogspot-db
           property: connectionString
-      - key: dd61ad00189b9bf6a96fa7262f201722
+      - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: false
