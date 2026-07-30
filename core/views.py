@@ -34,8 +34,6 @@ def _fetch_feed(url, limit=20):
 
 
 def home(request):
-    breaking_news = News.objects.all()
-    
     rss_articles = []
     rss_feeds = [
         "https://www.standardmedia.co.ke/rss/headlines.php",
@@ -52,7 +50,6 @@ def home(request):
     rss_articles = rss_articles[:20]
 
     return render(request, "home.html", {
-        "breaking_news": breaking_news,
         "rss_articles": rss_articles,
     })
 

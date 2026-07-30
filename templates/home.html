@@ -52,28 +52,16 @@
 <div id="news-container">
 <div class="list-group mb-5">
 
-    {% if rss_articles %}
     {% for article in rss_articles %}
     <a href="{{ article.link }}" target="_blank" class="list-group-item list-group-item-action">
         <h5>{{ article.title }}</h5>
         <span class="badge bg-success">Kenyan Media</span>
         <p class="mb-0 mt-1 small text-muted">{{ article.published|date:"M d, Y" }}</p>
     </a>
-    {% endfor %}
-    {% endif %}
-
-    {% for news in breaking_news %}
-    <a href="{% url 'news_detail' news.pk %}" class="list-group-item list-group-item-action">
-        <h5>{{ news.title }}</h5>
-        <span class="badge bg-primary">{{ news.category }}</span>
-        <p class="mb-0 mt-1 small text-muted">{{ news.created_at|date:"M d, Y" }}</p>
-    </a>
     {% empty %}
-    {% if not rss_articles %}
     <div class="list-group-item">
         No breaking news available. Check back soon!
     </div>
-    {% endif %}
     {% endfor %}
 
 </div>
