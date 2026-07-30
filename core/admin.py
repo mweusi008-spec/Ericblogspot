@@ -6,9 +6,20 @@ from .models import News, ContactInfo
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ("title", "category", "created_at")
-    list_filter = ("category", "created_at")
+    list_display = ("title", "category", "is_emergency", "created_at")
+    list_filter = ("category", "is_emergency", "created_at")
     search_fields = ("title", "content")
+    list_editable = ("is_emergency",)
+    list_display_links = ("title",)
+    fieldsets = (
+        (None, {
+            "fields": ("title", "category", "content"),
+        }),
+        ("Emergency Settings", {
+            "fields": ("is_emergency",),
+            "description": "Check this box ONLY for urgent emergency alerts that should appear as a scrolling ribbon on all pages.",
+        }),
+    )
 
 
 @admin.register(ContactInfo)
@@ -17,14 +28,12 @@ class ContactInfoAdmin(admin.ModelAdmin):
     list_editable = ("is_active",)
     
     def has_add_permission(self, request):
-        # Prevent adding more than one ContactInfo entry
         if ContactInfo.objects.exists():
             return False
         return super().has_add_permission(request)
     
     def changelist_view(self, request, extra_context=None):
         if not ContactInfo.objects.exists():
-            # Auto-create default contact info if none exists
             ContactInfo.objects.create(
                 email="mumoeric19@gmail.com",
                 whatsapp="+254758341490",
