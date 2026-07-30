@@ -167,7 +167,7 @@ def emergency_api(request):
 
 
 def contact(request):
-    contact_info = ContactInfo.objects.filter(is_active=True).first()
+    contact_info = ContactInfo.objects.filter(is_active=True).order_by('-id').first()
     return render(request, "contact.html", {
         "contact_info": contact_info,
     })
